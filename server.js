@@ -51,7 +51,7 @@ function initializeDatabase() {
 // GET all scores (sorted by score, highest first)
 app.get('/api/scores', (req, res) => {
     db.all(
-        'SELECT id, name, score, moves, time, difficulty, created_at FROM scores ORDER BY score DESC LIMIT 10',
+        'SELECT id, name, score, moves, time, difficulty, deviceType, deviceOS, browser, created_at FROM scores ORDER BY score DESC LIMIT 10',
         (err, rows) => {
             if (err) {
                 console.error('Error fetching scores:', err);
@@ -65,7 +65,7 @@ app.get('/api/scores', (req, res) => {
 
 // POST new score
 app.post('/api/scores', (req, res) => {
-    const { name, score, moves, time, difficulty } = req.body;
+    const { name, score, moves, time, difficulty, deviceType, deviceOS, browser } = req.body;
 
     // Validate input
     if (!name || score === undefined || moves === undefined || time === undefined) {
@@ -73,8 +73,8 @@ app.post('/api/scores', (req, res) => {
     }
 
     db.run(
-        'INSERT INTO scores (name, score, moves, time, difficulty) VALUES (?, ?, ?, ?, ?)',
-        [name, score, moves, time, difficulty || 'normal'],
+        'INSERT INTO scores (name, score, moves, time, difficulty, deviceType, deviceOS, browser) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [name, score, moves, time, difficulty || 'normal', deviceType || null, deviceOS || null, browser || null],
         function(err) {
             if (err) {
                 console.error('Error inserting score:', err);
