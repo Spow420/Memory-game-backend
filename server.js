@@ -42,7 +42,43 @@ function initializeDatabase() {
             console.error('Error creating table:', err);
         } else {
             console.log('✅ Scores table ready');
+            ensureColumns();
         }
+    });
+}
+
+function ensureColumns() {
+    db.all('PRAGMA table_info(scores)', (err, columns) => {
+        if (err) {
+            console.error('Error reading table info:', err);
+            return;
+        }
+
+        const existing = new Set(columns.map((col) => col.name));
+        const toAdd = [];
+
+        if (!existing.has('deviceType')) toAdd.push({ name: 'deviceType', type: 'TEXT' });
+        if (!existing.has('deviceOS')) toAdd.push({ name: 'deviceOS', type: 'TEXT' });
+        if (!existing.has('browser')) toAdd.push({ name: 'browser', type: 'TEXT' });
+
+        const addNext = () => {
+            const next = toAdd.shift();
+            if (!next) {
+                console.log('✅ Column check complete');
+                return;
+            }
+
+            db.run(`ALTER TABLE scores ADD COLUMN ${next.name} ${next.type}`, (alterErr) => {
+                if (alterErr) {
+                    console.error(`Error adding column ${next.name}:`, alterErr);
+                } else {
+                    console.log(`✅ Added column ${next.name}`);
+                }
+                addNext();
+            });
+        };
+
+        addNext();
     });
 }
 
