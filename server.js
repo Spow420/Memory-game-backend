@@ -32,6 +32,9 @@ function initializeDatabase() {
             moves INTEGER NOT NULL,
             time INTEGER NOT NULL,
             difficulty TEXT DEFAULT 'normal',
+            deviceType TEXT,
+            deviceOS TEXT,
+            browser TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `, (err) => {
@@ -62,7 +65,7 @@ app.get('/api/scores', (req, res) => {
 
 // POST new score
 app.post('/api/scores', (req, res) => {
-    const { name, score, moves, time, difficulty } = req.body;
+    const { name, score, moves, time, difficulty, deviceType, deviceOS, browser } = req.body;
 
     // Validate input
     if (!name || score === undefined || moves === undefined || time === undefined) {
@@ -70,8 +73,8 @@ app.post('/api/scores', (req, res) => {
     }
 
     db.run(
-        'INSERT INTO scores (name, score, moves, time, difficulty) VALUES (?, ?, ?, ?, ?)',
-        [name, score, moves, time, difficulty || 'normal'],
+        'INSERT INTO scores (name, score, moves, time, difficulty, deviceType, deviceOS, browser) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [name, score, moves, time, difficulty || 'normal', deviceType, deviceOS, browser],
         function(err) {
             if (err) {
                 console.error('Error inserting score:', err);
@@ -83,7 +86,10 @@ app.post('/api/scores', (req, res) => {
                     score,
                     moves,
                     time,
-                    difficulty
+                    difficulty,
+                    deviceType,
+                    deviceOS,
+                    browser
                 });
             }
         }
