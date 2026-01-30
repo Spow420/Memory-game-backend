@@ -51,7 +51,7 @@ function initializeDatabase() {
 // GET all scores (sorted by score, highest first)
 app.get('/api/scores', (req, res) => {
     db.all(
-        'SELECT id, name, score, moves, time, difficulty FROM scores ORDER BY score DESC LIMIT 10',
+        'SELECT id, name, score, moves, time, difficulty, created_at FROM scores ORDER BY score DESC LIMIT 10',
         (err, rows) => {
             if (err) {
                 console.error('Error fetching scores:', err);
