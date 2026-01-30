@@ -65,7 +65,7 @@ app.get('/api/scores', (req, res) => {
 
 // POST new score
 app.post('/api/scores', (req, res) => {
-    const { name, score, moves, time, difficulty, deviceType, deviceOS, browser } = req.body;
+    const { name, score, moves, time, difficulty } = req.body;
 
     // Validate input
     if (!name || score === undefined || moves === undefined || time === undefined) {
@@ -73,8 +73,8 @@ app.post('/api/scores', (req, res) => {
     }
 
     db.run(
-        'INSERT INTO scores (name, score, moves, time, difficulty, deviceType, deviceOS, browser) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [name, score, moves, time, difficulty || 'normal', deviceType, deviceOS, browser],
+        'INSERT INTO scores (name, score, moves, time, difficulty) VALUES (?, ?, ?, ?, ?)',
+        [name, score, moves, time, difficulty || 'normal'],
         function(err) {
             if (err) {
                 console.error('Error inserting score:', err);
@@ -86,10 +86,7 @@ app.post('/api/scores', (req, res) => {
                     score,
                     moves,
                     time,
-                    difficulty,
-                    deviceType,
-                    deviceOS,
-                    browser
+                    difficulty
                 });
             }
         }
